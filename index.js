@@ -1,57 +1,112 @@
-fetch('https://dummyjson.com/todos/user/5')
-  .then(res => res.json())
-  .then(data => console.log(data));
+const userContainer = document.getElementById('task-list');
 
-const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-const addBtn = document.querySelector('button');
-const inputField = document.querySelector('input[type="text"]');
-const taskList = document.querySelector('#task');
-const clearButton = document.querySelector('.clear-button');
-
-checkboxes.forEach(checkbox => {
-  checkbox.addEventListener('change', () => {
-    const parentLi = checkbox.parentElement;
-    if (checkbox.checked) {
-      parentLi.classList.add('completed');
-    } else {
-      parentLi.classList.remove('completed');
+const getUsers = async () => {
+  try {
+    const response = await fetch('https://dummyjson.com/todos?limit=5');
+    if (!response.ok) {
+      throw new Error('Failed to fetch users');
     }
-  });
-});
+    const data = await response.json();
+    return data.todos;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-addBtn.addEventListener('click', () => {
-  const newTask = inputField.value;
-  const newLi = document.createElement('li');
-  newLi.innerHTML = `
-    <input type="checkbox">
-    <label>${newTask}</label>
-    <button class="delete-button">X</button>
-  `;
-  taskList.appendChild(newLi);
-  inputField.value = '';
+const displayUsers = async () => {
+  const users = await getUsers();
+  console.log(users);
+  if (Array.isArray(users)) {
+    users.forEach(item => {
+      let li = document.createElement('li');
+      let checkbox = document.createElement('input');
+      let label = document.createElement('label');
+      let deleteButton = document.createElement('button');
 
-  const deleteButton = newLi.querySelector('.delete-button');
-  deleteButton.addEventListener('click', () => {
-    newLi.remove();
-  });
-});
+      li.style.display = 'flex';
+      li.style.alignItems = 'center';
+      li.style.padding = '10px';
+      li.style.border = '1px solid #ccc';
+      li.style.marginBottom = '10px';
 
-const deleteBtns = document.querySelectorAll('.delete-button');
-deleteBtns.forEach(deleteBtn => {
-  deleteBtn.addEventListener('click', () => {
-    const parentLi = deleteBtn.parentElement;
-    parentLi.remove();
-  });
-});
+      checkbox.type = 'checkbox';
+      checkbox.checked = item.completed;
+      checkbox.style.marginRight = '10px';
 
-function clearCompletedTasks() {
-  const completedTasks = taskList.querySelectorAll('li');
+      label.textContent = item.todo;
+
+      deleteButton.textContent = 'X';
+      deleteButton.classList.add('delete-button');
+
+      deleteButton.addEventListener('click', () => {
+        deleteTask(item.id);
+        li.remove();
+      });
+
+      li.appendChild(checkbox);
+      li.appendChild(label);
+      li.appendChild(deleteButton);
+      userContainer.appendChild(li);
+    });
+  }
+};
+
+const deleteTask = async (taskId) => {
+  try {
+    const response = await fetch(`https://dummyjson.com/todos/${taskId}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete task');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+displayUsers();
+
+const addNewTask = () => {
+  const taskInput = document.getElementById('new-task');
+  const newTask = taskInput.value.trim();
+  taskInput.value = '';
+  if (newTask) {
+    let li = document.createElement('li');
+    let checkbox = document.createElement('input');
+    let label = document.createElement('label');
+    let deleteButton = document.createElement('button');
+
+    li.style.display = 'flex';
+    li.style.alignItems = 'center';
+    li.style.padding = '10px';
+    li.style.border = '1px solid #ccc';
+    li.style.marginBottom = '10px';
+
+    checkbox.type = 'checkbox';
+    checkbox.style.marginRight = '10px';
+
+    label.textContent = newTask;
+
+    deleteButton.textContent = 'X';
+    deleteButton.classList.add('delete-button');
+
+    deleteButton.addEventListener('click', () => {
+      li.remove();
+    });
+
+    li.appendChild(checkbox);
+    li.appendChild(label);
+    li.appendChild(deleteButton);
+    userContainer.appendChild(li);
+  }
+};
+
+const clearCompletedTasks = () => {
+  const completedTasks = userContainer.querySelectorAll('li');
   completedTasks.forEach(task => {
     const checkbox = task.querySelector('input[type="checkbox"]');
     if (checkbox.checked) {
       task.remove();
     }
   });
-}
-
-clearButton.addEventListener('click', clearCompletedTasks);
+};
