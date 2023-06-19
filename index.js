@@ -18,6 +18,7 @@ checkboxes.forEach(checkbox => {
     }
   });
 });
+
 addBtn.addEventListener('click', () => {
   const newTask = inputField.value;
   const newLi = document.createElement('li');
