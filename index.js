@@ -1,7 +1,10 @@
 const userContainer = document.getElementById('task-list');
 const getUsers = async () => {
   try {
-    const response = await fetch('https://dummyjson.com/todos?limit=5');
+    const response = await fetch('https://dummyjson.com/todos?limit=5',{
+      method: 'GET'
+    }
+    );
     const data = await response.json();
     return data.todos;
   } catch (error) {
@@ -44,9 +47,21 @@ const deleteTask = async (taskId) => {
   } catch (error) {
     console.log(error);
   }};
+         
 displayUsers();
 
-const addNewTask = () => {
+const addNewTask = async (taskId) => {
+  try {
+    const response = await fetch(`https://dummyjson.com/todos/add/${taskId}`, {
+      method: 'POST',
+    });
+  const data = await response.json();
+  console.log(data);
+  } catch (error) {
+    console.log(error);
+  }
+
+  
   const taskInput = document.getElementById('new-task');
   const newTask = taskInput.value.trim();
   taskInput.value = '';
@@ -71,4 +86,19 @@ const addNewTask = () => {
     li.appendChild(label);
     li.appendChild(deleteButton);
     userContainer.appendChild(li);
-}};
+    console.log({newTask});
+  }
+};
+const updateTask = async (taskId, updatedTask) => {
+  try {
+    const response = await fetch(`https://dummyjson.com/todos/${taskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ todo: updatedTask })
+    });
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
