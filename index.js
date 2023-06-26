@@ -12,34 +12,29 @@ const getUsers = async () => {
 const displayUsers = async () => {
   const users = await getUsers();
   console.log(users);
-  // user.users.map((item)=>{
-    if (Array.isArray(users)) {
-      users.map(item => {
-        let li = document.createElement('li');
-        let checkbox = document.createElement('input');
-        let label = document.createElement('label');
-        let deleteButton = document.createElement('button');
+  users.map(item => {
+    let li = document.createElement('li');
+    let checkbox = document.createElement('input');
+    let label = document.createElement('label');
+    let deleteButton = document.createElement('button');
     
-        checkbox.type = 'checkbox';
-        checkbox.checked = item.completed;
-        checkbox.style.marginRight = '10px';
+    checkbox.type = 'checkbox';
+    checkbox.checked = item.completed;
+    checkbox.style.marginRight = '10px';
     
-        label.textContent = item.todo;
+    label.textContent = item.todo;
     
-        deleteButton.textContent = 'X';
-        deleteButton.classList.add('delete-button');
-    
-        deleteButton.addEventListener('click', () => {
-          deleteTask(item.id);
-          li.remove();
-        });
-    
-        li.appendChild(checkbox);
-        li.appendChild(label);
-        li.appendChild(deleteButton);
-        userContainer.appendChild(li);
-    });
-  }
+    deleteButton.textContent = 'X';
+    deleteButton.classList.add('delete-button');
+    deleteButton.addEventListener('click', () => {
+        deleteTask(item.id);
+        li.remove();
+      });
+      li.appendChild(checkbox);
+      li.appendChild(label);
+      li.appendChild(deleteButton);
+      userContainer.appendChild(li);
+    }); 
 }
 const deleteTask = async (taskId) => {
   try {
@@ -48,9 +43,7 @@ const deleteTask = async (taskId) => {
     });
   } catch (error) {
     console.log(error);
-  }
-};
-
+  }};
 displayUsers();
 
 const addNewTask = () => {
@@ -78,5 +71,4 @@ const addNewTask = () => {
     li.appendChild(label);
     li.appendChild(deleteButton);
     userContainer.appendChild(li);
-  }
-};
+}};
