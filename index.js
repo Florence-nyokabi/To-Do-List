@@ -20,7 +20,7 @@ const displayUsers = async () => {
     
     checkbox.type = 'checkbox';
     checkbox.checked = item.completed;
-    // checkbox.style.marginRight = '10px';
+    checkbox.style.marginRight = '10px';
     
     label.textContent = item.todo;
     
